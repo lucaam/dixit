@@ -9,8 +9,11 @@ const cors = require("cors");
 const redis = require('./database/init_redis')
 const mongo = require('./database/init_mongo')
 
-const app = express();
-require('dotenv/config') 
+//variable declarations at the top
+var socket = require('./websocket');
+
+var app = express();
+require('dotenv/config')
 
 app.use(cors());
 app.use(bodyParser.json())
@@ -18,11 +21,11 @@ app.use(bodyParser.json())
 // Import routes
 const usersRoute = require('./user/userApi')
 const cardsRoute = require('./card/cardApi')
-const roundsRoute = require('./round/roundApi')
+const matchesRoute = require('./match/matchApi')
 
 app.use('/api/v1/users', usersRoute);
 app.use('/api/v1/cards', cardsRoute);
-app.use('/api/v1/rounds', roundsRoute);
+app.use('/api/v1/matches', matchesRoute);
 
 // make all the files in 'public' available
 // https://expressjs.com/en/starter/static-files.html
@@ -30,16 +33,21 @@ app.use(express.static("public"));
 
 // https://expressjs.com/en/starter/basic-routing.html
 app.get("/", (request, response) => {
-  response.sendFile(__dirname + "/views/index.html");
+    response.sendFile(__dirname + "/views/index.html");
+});
+
+app.get("/socket", (request, response) => {
+    response.sendFile(__dirname + "/views/socket.html");
 });
 
 //The 404 Route
-app.get("*", function (request, response) {
-  response.sendFile(__dirname + "/views/error/404.html");
+app.get("*", function(request, response) {
+    response.sendFile(__dirname + "/views/error/404.html");
 });
 
 // listen for requests :)
-const listener = app.listen(process.env.PORT || 3000, () => {
-  console.log("Your app is listening on port " + listener.address().port);
+var listener = app.listen(process.env.PORT || 3000, () => {
+    console.log("Your app is listening on port " + listener.address().port);
 });
 
+socket.startSocket(listener)
