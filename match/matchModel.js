@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 const Card = require('../card/cardModel').schema
 const User = require('../user/userModel').schema
 
-const roundSchema = new Schema({
-    name : {
+const matcheschema = new Schema({
+    name: {
         type: String,
         required: true,
         min: 6,
@@ -18,23 +18,27 @@ const roundSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    endDate: {
+        type: Date,
+    },
     cards: {
         type: [Card],
-        required: false
-    },
-    card: {
-        type: Card,
         required: false
     },
     users: {
         type: [User],
         required: false
     },
-    goal:{
+    goal: {
         type: Number,
         required: false,
         default: 30
+    },
+    narrator: {
+        type: [User],
+        required: false
     }
+
 });
 
-module.exports = mongoose.model('Round', roundSchema);
+module.exports = mongoose.model('match', matcheschema);
