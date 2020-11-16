@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const Card = require('../card/cardModel').schema
 
 const userSchema = new Schema({
-    name : {
+    name: {
         type: String,
         required: true,
         min: 6,
@@ -31,7 +31,7 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        enum : ['user','admin'],
+        enum: ['user', 'admin'],
         required: false,
         default: "user"
     },
@@ -43,11 +43,36 @@ const userSchema = new Schema({
         type: Card,
         required: false
     },
-    score:{
+    score: {
         type: Number,
         required: false,
         default: 0
+    },
+    victories: {
+        type: Number,
+        default: 0,
+        required: false
+    },
+    defeats: {
+        type: Number,
+        default: 0,
+        required: false
     }
+
+});
+
+
+userSchema.post('init', function(doc) {
+    console.log('%s has been initialized from the db', doc._id);
+});
+userSchema.post('validate', function(doc) {
+    console.log('%s has been validated (but not saved yet)', doc._id);
+});
+userSchema.post('save', function(doc) {
+    console.log('%s has been saved', doc._id);
+});
+userSchema.post('remove', function(doc) {
+    console.log('%s has been removed', doc._id);
 });
 
 module.exports = mongoose.model('User', userSchema);
