@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const Card = require('../card/cardModel').schema
 const User = require('../user/userModel').schema
 
-const matcheschema = new Schema({
+const matchSchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -41,4 +41,4 @@ const matcheschema = new Schema({
 
 });
 
-module.exports = mongoose.model('match', matcheschema);
+module.exports = mongoose.model('Match', matchSchema);
