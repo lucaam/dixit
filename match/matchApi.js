@@ -1,13 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const matchService = require("./matchService");
-const { insertValidation } = require("./matchValidation");
+const { matchValidation } = require("./matchValidation");
 const verify = require("../user/verifyToken");
+const cardService = require("../card/cardService");
 
+
+// Create match
 router.post("/", verify, async(request, response) => {
-    const { error } = insertValidation(request.body);
+    const { error } = matchValidation(request.body);
 
-    if (error) return response.status(400).send(error.details[0].message);
+    if (error) return response.status(400).json(error.details[0].message);
 
     const nameExists = await matchService.getMatchByName(request.body.name);
 
@@ -17,13 +20,14 @@ router.post("/", verify, async(request, response) => {
             .send("match with specified name already exists");
 
     try {
-        const savedmatch = await matchService.createMatch(request.body.name);
-        response.send({ savedmatch: savedmatch._id });
+        const savedMatch = await matchService.createMatch(request.body.name);
+        response.json(savedMatch);
     } catch (err) {
-        response.status(400).send(err);
+        response.status(400).json({ message: err });
     }
 });
 
+// Get all matches
 router.get("/", verify, async(request, response) => {
     try {
         const matches = await matchService.getMatches();
@@ -33,15 +37,7 @@ router.get("/", verify, async(request, response) => {
     }
 });
 
-router.get("/:matchId", verify, async(request, response) => {
-    try {
-        const match = await matchService.getMatch(request.params.matchId);
-        response.json(match);
-    } catch (err) {
-        response.json({ message: err });
-    }
-});
-
+// Get match by name
 router.get("/:matchName", verify, async(request, response) => {
     try {
         const match = await matchService.getMatchByName(request.params.matchName);
@@ -51,38 +47,40 @@ router.get("/:matchName", verify, async(request, response) => {
     }
 });
 
+// Delete match by id
 router.delete("/:matchId", verify, async(request, response) => {
     try {
-        const removedmatch = await matchService.deleteMatch(id)
+        const removedmatch = await matchService.deleteMatch(request.params.matchId)
         response.json(removedmatch);
     } catch (err) {
         response.json({ message: err });
     }
 });
 
-router.patch(":/matchId", verify, async(request, response) => {
+// Add new user to match's users list
+router.patch("/set/user:/matchName", verify, async(request, response) => {
     try {
         const updatedmatch = await matchService.addUserToMatch(
             request.params.matchId,
-            user
+            request.body.user
         );
         response.json(updatedmatch);
-        response.json(updatedCard);
     } catch (err) {
         response.json({ message: err });
     }
 });
 
-router.patch(":/matchName", verify, async(request, response) => {
+// Add cards to a match
+router.patch("/set/cards/:/matchName", verify, async(request, response) => {
     try {
-        const updatedmatch = await matchService.addUserToMatch(
-            request.params.matchName,
-            user
+        const updatedmatch = matchService.setCards(
+            request.params.matchName
         );
         response.json(updatedmatch);
     } catch (err) {
         response.json({ message: err });
     }
 });
+
 
 module.exports = router;
