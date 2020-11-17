@@ -3,7 +3,20 @@ const Schema = mongoose.Schema;
 const Card = require('../card/cardModel').schema
 
 const userSchema = new Schema({
+
     name: {
+        type: String,
+        required: true,
+        min: 6,
+        max: 255
+    },
+    surname: {
+        type: String,
+        required: true,
+        min: 6,
+        max: 255
+    },
+    username: {
         type: String,
         required: true,
         min: 6,

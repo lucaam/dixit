@@ -1,18 +1,29 @@
-const User = require('./userModel');
 const mongoose = require('mongoose');
+const User = require('./userModel');
 
 function getUser(id) {
-    return User.findById(id).select('username').exec();
+    return User.findOne({ _id: id })
+}
+
+function getUsers(id) {
+    return User.find();
 }
 
 function getUserByEmail(email) {
-    return User.findOne({ email: email }).exec();
+    return User.findOne({ email: email });
 }
 
-function createUser(email, name, password, role) {
+function getUserByUsername(username) {
+    return User.findOne({ username: username });
+}
+//         request.body.email, request.body.name, hashedPassword, request.body.role, request.body.surname, request.body.username)
+
+function createUser(email, name, password, role, username, surname) {
     const user = new User({
-        email: email,
         name: name,
+        surname: surname,
+        username: username,
+        email: email,
         password: password,
         role: role
     })
@@ -51,4 +62,4 @@ function setDefeats(id, defeats) {
     return User.updateOne({ _id: id }, { $set: { defeats: defeats } })
 }
 
-module.exports = { getUser, createUser, deleteUser, getUserByEmail, deleteCard, updateScore, setCards, deleteCards, setVictories, setDefeats, updateLogin }
+module.exports = { getUser, getUsers, createUser, deleteUser, getUserByEmail, deleteCard, updateScore, setCards, deleteCards, setVictories, setDefeats, updateLogin, getUserByUsername}

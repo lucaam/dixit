@@ -4,13 +4,21 @@ function getUser(id) {
     return userRepository.getUser(id);
 }
 
+function getUsers(id) {
+    return userRepository.getUsers();
+}
+
 function getUserByEmail(email) {
     return userRepository.getUserByEmail(email);
 }
 
-function createUser(email, name, password, role) {
+function getUserByUsername(username) {
+    return userRepository.getUserByUsername(username);
+}
 
-    return userRepository.createUser(email, name, password, role)
+function createUser(email, name, password, role, surname, username) {
+
+    return userRepository.createUser(email, name, password, role, surname, username)
 }
 
 function deleteUser(id) {
@@ -46,4 +54,4 @@ function setDefeats(id, defeats) {
     return userRepository.setDefeats(id, defeats)
 }
 
-module.exports = { getUser, createUser, deleteUser, getUserByEmail, deleteCard, updateScore, setCards, deleteCards, setVictories, setDefeats, updateLogin }
+module.exports = { getUser, createUser, deleteUser, getUserByEmail, deleteCard, updateScore, setCards, deleteCards, setVictories, setDefeats, updateLogin, getUsers, getUserByUsername}

@@ -1,32 +1,38 @@
-const match = require('./matchModel');
 const mongoose = require('mongoose');
+const Match = require('./matchModel');
 
 function getMatch(id) {
-    return match.findById(id).exec();
+    return Match.findById(id).exec();
 }
 
 function getMatches() {
-    return match.find().exec
+    return Match.find();
 }
 
 function getMatchByName(name) {
-    return match.findOne({ name: name }).exec();
+    return Match.findOne({ name: name }).exec();
 }
 
-function createMatch(name) {
-    const match = new match({
-        name: name,
+function createMatch(name, cards) {
+
+    const match = new Match({
+        name: name
     })
     return match.save();
+   
 }
 
 function deleteMatch(id) {
-    return match.findOneAndDelete(id).exec();
+    return Match.findOneAndDelete(id).exec();
 }
 
 function addUserToMatch(name, user) {
-    return match.updateOne({ name: name }, { $push: user });
+    return Match.updateOne({ name: name }, { $push: {users: user } });
+}
+
+function setCards(name, cards) {
+    return Match.updateOne({ name: name }, { $set: { cards: cards } });
 }
 
 
-module.exports = { getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch }
+module.exports = { getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards}

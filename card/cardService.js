@@ -9,7 +9,6 @@ function getCards() {
 }
 
 function createCard( name, picture) {
-
     return cardRepository.createCard(name, picture)
 }
 
@@ -23,7 +22,5 @@ function updateCard(id, name) {
         {$set: name}
       );
 }
-
-
 
 module.exports = { getCard, createCard, deleteCard, getCards , updateCard}
