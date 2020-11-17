@@ -10,6 +10,10 @@ function hello(socket) {
 
 function addCardOnTable(socket) {
     socket.on('addCardOnTable', function() {
+
+        // Do things 
+        // Probably redis
+        
         socket.emit('newCardOnTable', { message: { card: { name: "test", picture: "test" } } })
     })
 }

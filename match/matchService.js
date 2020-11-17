@@ -1,5 +1,6 @@
-const matchRepository = require('./matchRepository');
 const mongoose = require('mongoose');
+const matchRepository = require('./matchRepository');
+const cardService = require('../card/cardService');
 
 function getMatch(id) {
     return matchRepository.getMatch(id);
@@ -25,5 +26,10 @@ function addUserToMatch(name, user) {
     return matchRepository.addUserToMatch(name, user)
 }
 
+function setCards(name) {
+    const cards = cardService.getCards()   
+    return matchRepository.setCards(name, cards)
+}
 
-module.exports = { getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch }
+
+module.exports = { getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards}
