@@ -21,6 +21,10 @@ const matchSchema = new Schema({
     endDate: {
         type: Date,
     },
+    narrator: {
+        type: User,
+        required: false
+    },
     cards: {
         type: [Card],
         required: false
@@ -34,10 +38,20 @@ const matchSchema = new Schema({
         required: false,
         default: 30
     },
-    narrator: {
-        type: [User],
+    actualPlayers: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+    expectedPlayers: {
+        type: Number,
+        required: true
+    },
+    cardsOnTable: {
+        type: [Card],
         required: false
     }
+    
 
 });
 
