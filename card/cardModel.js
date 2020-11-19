@@ -13,6 +13,11 @@ const cardSchema = new Schema({
         required: true,
         min: 1,
         max: 255
+    },
+    selected: {
+        type: Number,
+        required: false,
+        default: 0
     }
 });
 
