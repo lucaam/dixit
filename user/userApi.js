@@ -31,7 +31,7 @@ router.post('/register', async(request, response) => {
 
     try {
         const savedUser = await userService.createUser(request.body.email, request.body.name, hashedPassword, request.body.role, request.body.surname, request.body.username)
-        response.send({ user: savedUser._id });
+        response.status(200).send({ savedUser });
     } catch (err) {
         response.status(400).send(err);
     }
@@ -49,8 +49,7 @@ router.post('/login', async(request, response) => {
     const validPassword = await bcrypt.compare(request.body.password, user.password)
     if (!validPassword) return response.status(400).send('Email or PASSWORD is wrong')
 
-    const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET)
-        // Why it is not updating???
+    const token = jwt.sign({ user: user }, process.env.TOKEN_SECRET)
     const updatedLogin = userService.updateLogin(user._id)
     response.header('auth-token', token).json({token: token, user})
 })

@@ -1,3 +1,4 @@
+
 function doLogin() {
     const xhr = new XMLHttpRequest()
 
@@ -8,6 +9,8 @@ function doLogin() {
 
     xhr.addEventListener('readystatechange', function() {
         if (this.readyState === this.DONE) {
+            console.log(this.getResponseHeader("auth-token"))
+            console.log(JSON.parse(this.response))
             return this.getResponseHeader("auth-token");
         }
     })

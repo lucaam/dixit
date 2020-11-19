@@ -8,8 +8,15 @@ exports.startSocket = function startIo(server) {
     packtchat.on('connection', function(socket) {
 
         // This list represents all possibile events that can be trigger after the connection
-        matchEvent.hello(socket)
-        matchEvent.addCardOnTable(socket)
+        socket.on('join', function(data){
+            console.log("Room " + data.name)
+            socket.join(data.name)
+
+        })
+        matchEvent.hello(socket, io)
+        matchEvent.addCardOnTable(socket, io)
+        matchEvent.readyToPlay(socket, io)
+        matchEvent.selectCard(socket, io)
 
     });
 
