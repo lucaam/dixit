@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const Card = require('./cardModel');
 
 function getCard(name) {
-    return Card.findOne({name: name})
+    return Card.findOne({name: name}).exec()
 }
 function getCards() {
-    return Card.find();
+    return Card.find().exec();
 }
 
 function createCard(name, picture) {
@@ -17,10 +17,10 @@ function createCard(name, picture) {
 }
 
 function deleteCard(id) {
-    return Card.findOneAndDelete(id)
+    return Card.findOneAndDelete(id).exec()
 }
 
 function updateCard(id, name) {
-    return Card.updateOne(id, name)
+    return Card.updateOne(id, name).exec()
 }
 module.exports = { getCard, createCard, deleteCard , getCards, updateCard}
