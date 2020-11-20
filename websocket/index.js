@@ -1,9 +1,17 @@
 var socket = require('socket.io');
 
+
 var matchEvent = require('../match/matchSocketEvent')
 
 exports.startSocket = function startIo(server) {
-    var io = socket(server);
+
+    const io = require("socket.io")(server, {
+        cors: {
+          origin: "*",
+          methods: ["GET", "POST"]
+        }
+      });
+
     var packtchat = io.of('/');
     packtchat.on('connection', function(socket) {
 
