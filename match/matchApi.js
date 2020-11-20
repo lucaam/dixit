@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const matchService = require("./matchService");
-const { matchValidation } = require("./matchValidation");
+const { matchValidation, joinMatchValidation } = require("./matchValidation");
 const verify = require("../user/verifyToken");
 const cardService = require("../card/cardService");
 const jwt = require('jsonwebtoken')
@@ -24,9 +24,41 @@ router.post("/", verify, async(request, response) => {
         var savedMatch = await matchService.createMatch(request.body.name, request.body.expectedPlayers);
         var decodeToken = jwt.decode(request.header('auth-token'))
         var userAdded = matchService.addUserToMatch(savedMatch.name, decodeToken.user)
+        var cards = await cardService.getCards()
+        
+        matchService.setCards(savedMatch.name, cards)
+        matchService.setNarrator(savedMatch.name, decodeToken.user)
+        savedMatch.cards = cards
+        savedMatch.narrator = decodeToken.user
 
-        console.log("add user to match" + userAdded)
         savedMatch.users.push(decodeToken.user)
+
+        response.json(savedMatch);
+    } catch (err) {
+        response.status(400).json({ message: err.message });
+    }
+});
+
+// Create match
+router.post("/join", verify, async(request, response) => {
+    const { error } = joinMatchValidation(request.body);
+
+    if (error) return response.status(400).json(error.details[0].message);
+
+    const nameExists = await matchService.getMatchByName(request.body.name);
+
+    if (!nameExists)
+        return response
+            .status(400)
+            .send("Match with specified name does not exists");
+
+    try {
+        var savedMatch = await matchService.getMatchByName(request.body.name);
+        var decodeToken = jwt.decode(request.header('auth-token'))
+        var userAdded = matchService.addUserToMatch(savedMatch.name, decodeToken.user)
+
+        savedMatch.users.push(decodeToken.user)
+
         response.json(savedMatch);
     } catch (err) {
         response.status(400).json({ message: err.message });
