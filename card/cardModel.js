@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const User = require('../user/userModel').schema
 
 const cardSchema = new Schema({
     name: {
@@ -15,10 +16,11 @@ const cardSchema = new Schema({
         max: 255
     },
     selected: {
-        type: Number,
+        type: [User],
         required: false,
-        default: 0
+        default: undefined
     }
+    
 });
 
 module.exports = mongoose.model('Card', cardSchema);
