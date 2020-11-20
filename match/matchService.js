@@ -34,9 +34,7 @@ function setNarrator(name, user) {
     return matchRepository.setNarrator(name, user)
 }
 function setCards(name, cards) {
-    console.log("settingcards for match")
-    console.log(cards)
-    console.log(name)
+
     return matchRepository.setCards(name, cards)
 }
 
@@ -45,7 +43,10 @@ function extractCards(match, number){
     var extractedCards = []
     for(var i = 0; i < number; i++){
         var randomNumber = Math.floor(Math.random() * (match.cards.length))
-        extractedCards.push(match.cards[randomNumber])
+        console.log("numero scelto " + randomNumber)
+        var cardSelected = match.cards[randomNumber]
+        console.log(cardSelected)
+        extractedCards.push(cardSelected)
         match.cards.splice(randomNumber, 1)
     }
 
@@ -59,8 +60,8 @@ function addCardOnTable(name, card) {
     
 }
 
-function selectCardOnTable(name, card) {
-    return matchRepository.selectCardOnTable(name, card)
+function selectCardOnTable(name, card, user) {
+    return matchRepository.selectCardOnTable(name, card, user)
     
 }
 
