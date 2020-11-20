@@ -35,8 +35,8 @@ function addCardOnTable(name, card) {
     return Match.updateOne({ name: name }, { $push: {cardsOnTable: card } }).exec();
 }
 
-function selectCardOnTable(name, card) {
-    return Match.updateOne({ name: name }, { $inc: {"cardsOnTable.$[el].selected": 1 } }, {arrayFilters: [{"el.name": card.name}], new: false}).exec();
+function selectCardOnTable(name, card, user) {
+    return Match.updateOne({ name: name }, { $push: {"cardsOnTable.$[el].selected": user } }, {arrayFilters: [{"el.name": card.name}], new: false}).exec();
 }
 
 function setNarrator(name, user) {
