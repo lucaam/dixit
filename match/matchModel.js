@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Card = require('../card/cardModel').schema
 const User = require('../user/userModel').schema
+const Card = require('../card/cardModel').schema
 
 const matchSchema = new Schema({
     name: {
@@ -27,11 +27,14 @@ const matchSchema = new Schema({
     },
     cards: {
         type: [Card],
-        required: false
+        required: false,
+        default: undefined
+
     },
     users: {
         type: [User],
-        required: false
+        required: false,
+        default: undefined
     },
     goal: {
         type: Number,
@@ -49,10 +52,12 @@ const matchSchema = new Schema({
     },
     cardsOnTable: {
         type: [Card],
-        required: false
+        required: false,
+        default: undefined
     }
     
 
 });
+
 
 module.exports = mongoose.model('Match', matchSchema);

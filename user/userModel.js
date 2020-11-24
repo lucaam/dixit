@@ -50,7 +50,9 @@ const userSchema = new Schema({
     },
     cards: {
         type: [Card],
-        required: false
+        required: false,
+        default: undefined
+
     },
     card: {
         type: Card,
@@ -72,20 +74,6 @@ const userSchema = new Schema({
         required: false
     }
 
-});
-
-
-userSchema.post('init', function(doc) {
-    console.log('%s has been initialized from the db', doc._id);
-});
-userSchema.post('validate', function(doc) {
-    console.log('%s has been validated (but not saved yet)', doc._id);
-});
-userSchema.post('save', function(doc) {
-    console.log('%s has been saved', doc._id);
-});
-userSchema.post('remove', function(doc) {
-    console.log('%s has been removed', doc._id);
 });
 
 module.exports = mongoose.model('User', userSchema);
