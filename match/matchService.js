@@ -41,16 +41,15 @@ function setCards(name, cards) {
 function extractCards(match, number){
 
     var extractedCards = []
-    for(var i = 0; i < number; i++){
+    for(var m = 0; m < number; m++){
         var randomNumber = Math.floor(Math.random() * (match.cards.length))
         console.log("numero scelto " + randomNumber)
         var cardSelected = match.cards[randomNumber]
-        console.log(cardSelected)
         extractedCards.push(cardSelected)
         match.cards.splice(randomNumber, 1)
     }
 
-    console.log(setCards(match.name, match.cards))
+    console.log("Estrazione carte terminata")
     return extractedCards
 
 }
@@ -65,4 +64,21 @@ function selectCardOnTable(name, card, user) {
     
 }
 
-module.exports = { getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, extractCards, incrementActualPlayers, setNarrator, addCardOnTable, selectCardOnTable}
+function updateUserCards(match, user) {
+    return matchRepository.updateUserCards(match, user)
+    
+}
+
+function updateNarratorCards(match, user){
+    return matchRepository.updateNarratorCards(match, user)
+}
+
+function cleanCardOnTable(match) {
+    return matchRepository.cleanCardOnTable(match)
+}
+
+function removeCardsFromMatch(match, cards){
+    return matchRepository.removeCardsFromMatch(match, cards);
+}
+
+module.exports = { removeCardsFromMatch, cleanCardOnTable, updateNarratorCards, getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, extractCards, incrementActualPlayers, setNarrator, addCardOnTable, selectCardOnTable, updateUserCards}

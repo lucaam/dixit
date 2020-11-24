@@ -28,6 +28,7 @@ function deleteMatch(id) {
 }
 
 function addUserToMatch(name, user) {
+
     return Match.updateOne({ name: name }, { $push: {users: user } }).exec();
 }
 
@@ -36,7 +37,7 @@ function addCardOnTable(name, card) {
 }
 
 function selectCardOnTable(name, card, user) {
-    return Match.updateOne({ name: name }, { $push: {"cardsOnTable.$[el].selected": user } }, {arrayFilters: [{"el.name": card.name}], new: false}).exec();
+    return Match.updateOne({ name: name }, { $push: {"cardsOnTable.$[el].selected": user } }, {arrayFilters: [{"el.name": card.name}], new: true}).exec();
 }
 
 function setNarrator(name, user) {
@@ -53,4 +54,25 @@ function incrementActualPlayers(name, number) {
 
 }
 
-module.exports = { getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, incrementActualPlayers, selectCardOnTable, setNarrator, addCardOnTable}
+function updateUserCards(match, user){
+    console.log("updating user cards")
+    return Match.updateOne({name: match.name}, {$set: {"users.$[el].cards": user.cards}}, {arrayFilters: [{"el.username": user.username}]} ).exec()
+}
+
+function updateNarratorCards(match, user) {
+    console.log("updating narrator cards")
+    return Match.updateOne({name: match.name}, {$set: {"narrator.cards": user.cards}} ).exec()
+    
+    
+}
+
+function cleanCardOnTable(match) {
+    console.log("cleaning cards on table")
+    return Match.updateOne({name: match.name}, {$set: {cardsOnTable: []}} ).exec()
+}
+
+function removeCardsFromMatch(match, cards) {
+    return Match.updateOne({name: match.name}, {$pull: {"cards": {$in: cards}}} ).exec()
+}
+
+module.exports = { removeCardsFromMatch, cleanCardOnTable, updateNarratorCards, getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, incrementActualPlayers, selectCardOnTable, setNarrator, addCardOnTable, updateUserCards}
