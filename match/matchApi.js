@@ -18,7 +18,7 @@ router.post("/", verify, async(request, response) => {
     if (nameExists)
         return response
             .status(400)
-            .send("match with specified name already exists");
+            .send("Match with specified name already exists");
 
     try {
         var savedMatch = await matchService.createMatch(request.body.name, request.body.expectedPlayers);
@@ -28,14 +28,16 @@ router.post("/", verify, async(request, response) => {
         
         matchService.setCards(savedMatch.name, cards)
         matchService.setNarrator(savedMatch.name, decodeToken.user)
+
+
         savedMatch.cards = cards
         savedMatch.narrator = decodeToken.user
-
+        savedMatch.users = savedMatch.users || []
         savedMatch.users.push(decodeToken.user)
 
         response.json(savedMatch);
     } catch (err) {
-        response.status(400).json({ message: err.message });
+        response.status(400).json({ message: err.message, error: err});
     }
 });
 
