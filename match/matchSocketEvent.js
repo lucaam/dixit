@@ -1,22 +1,41 @@
 const matchLogic = require("./matchSocketFunction");
 const Match = require("./matchModel");
-function hello(socket) {
+
+const User = require('../user/userModel')
+const Card = require('../card/cardModel')
+
+
+function hello(socket, io) {
   socket.on("hello", function () {
     socket.emit("hello", { message: "Hello man!" });
   });
 }
 
-function addCardOnTable(socket) {
+function addCardOnTable(socket, io) {
   socket.on("addCardOnTable", function (data) {
     // Update card on table
     matchLogic.addCardOnTable(data.match.name, data.card);
 
     // Tell everyone that a new card is available on the table
     socket.to(data.match.name).emit("newCardOnTable", data.card);
+
+
+    matchLogic
+    .startTurn(data.match.name)
+    .then(function (result) {
+    // Se il numero di carte sul tavolo e' uguale al numero di giocatori allora gli utenti possono selezionare le carte
+    console.log("Turn can start before emit ");
+  
+      io.in(data.match.name).emit("turnStart", result)
+      console.log("Turn can start after emit " + result);
+    })
+    .catch((error) =>
+      console.log("Turn cannot start")
+    );
   });
 }
 
-function selectCard(socket) {
+function selectCard(socket, io) {
   socket.on("selectCard", function (data) {
     var cardSelected = data.card;
     // Update card on table
@@ -28,26 +47,72 @@ function selectCard(socket) {
     matchLogic
       .endTurn(data.match.name)
       .then(function (result) {
+
+
+        console.log("Posso far terminare il turno e preparare il nuovo turno")
+
         // Match can stop and we can evaluate who took how many points
 
-        console.log("Turn can end with new match data " + result);
+        // Assegnare i punti
+
+        var matchUpdated = matchLogic.assignPoints(result)
+
+        console.log("Before set new narrator")
+        console.log("this is the match I am passing to set new narrator" + matchUpdated)
+        // Nuovo narratore
+        matchUpdated = matchLogic.setNewNarrator(matchUpdated);
+        console.log("After set new narrator")
+
+
+        // Rimuovere vecchie carte utenti
+        for(var a = 0; a < matchUpdated.users.length; a++){
+          user = matchLogic.removeSelectedCard(matchUpdated.users[a], matchUpdated)
+          matchUpdated.users[a] = user
+        }
+        console.log("Afgter removeSelectedCard from user")
+
+        // Assegnare nuove carte utenti
+        for(var b = 0; b < matchUpdated.users.length; b++){
+          user = matchLogic.assignCards(matchUpdated.users[b], matchUpdated)
+          matchUpdated.users[b] = user
+        }
+        console.log("Afgter assign cards from user")
+
+        matchUpdated = matchLogic.cleanTable(matchUpdated)      
+       
+        console.log("Afgter clean table")
+
+        io.in(data.match.name).emit("turnEnded", matchUpdated)
+
+        console.log("Turn ended with match updated: " + matchUpdated);
+        return
       })
       .catch((error) =>
         // Match should continue
         console.log("Turn shuld continue")
       );
+
+      return
   });
+
+  return
 }
 
 function readyToPlay(socket, io) {
   // Data must contain the 2 objects: user, match
   socket.on("readyToPlay", function (data) {
+
     console.log("readyToPlay");
+    console.log("data received " + data)
     // Tell everyone which user is ready
     socket.to(data.match.name).emit("newUserReady", data.user);
 
     // Sending back to the user his object with cards assigned
     var userWithCards = matchLogic.assignCards(data.user, data.match);
+
+    console.log("User received is + " + data.user)
+    console.log("User with cards object here")
+    console.log(userWithCards)
     socket.emit("assignedCards", userWithCards);
 
     // AGGIORANRE IL MATCH NEL CLIENT
@@ -64,6 +129,9 @@ function readyToPlay(socket, io) {
     })
       .catch((error) => console.log("Not ready to play"));
   });
+
+  return
 }
+
 
 module.exports = { hello, addCardOnTable, readyToPlay, selectCard };
