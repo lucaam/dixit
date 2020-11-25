@@ -1,4 +1,3 @@
-const { model } = require("mongoose");
 const redis = require("redis");
 
 //localhost:6379
@@ -27,4 +26,4 @@ process.on('SIGINT', () => {
     client.quit()
 })
 
-model.exports = client
+module.exports = client
