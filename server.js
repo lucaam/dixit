@@ -6,7 +6,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const redis = require('./database/init_redis')
+// const redis = require('./database/init_redis')
 const mongo = require('./database/init_mongo')
 
 //variable declarations at the top
