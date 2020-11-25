@@ -64,28 +64,30 @@ function selectCard(socket, io) {
         console.log("After set new narrator")
 
 
-        // Rimuovere vecchie carte utenti
-        for(var a = 0; a < matchUpdated.users.length; a++){
-          user = matchLogic.removeSelectedCard(matchUpdated.users[a], matchUpdated)
-          matchUpdated.users[a] = user
-        }
-        console.log("Afgter removeSelectedCard from user")
+        
 
-        // Assegnare nuove carte utenti
-        for(var b = 0; b < matchUpdated.users.length; b++){
-          user = matchLogic.assignCards(matchUpdated.users[b], matchUpdated)
-          matchUpdated.users[b] = user
-        }
-        console.log("Afgter assign cards from user")
+         matchLogic.removeUsersCards(matchUpdated).then(function (update) {
+          console.log("Afgter removeSelectedCard from user")
 
-        matchUpdated = matchLogic.cleanTable(matchUpdated)      
+          // Assegnare nuove carte utenti
+         
+          matchLogic.assignCardsUsers(update).then(function (update1) {
+            
+          console.log("Afgter assign cards from user")
+  
+          matchUpdated = matchLogic.cleanTable(update1)      
+         
+          console.log("Afgter clean table")
+  
+          io.in(data.match.name).emit("turnEnded", matchUpdated)
+  
+          console.log("Turn ended with match updated: " + matchUpdated);
+          
+          })
+  
+        })
+
        
-        console.log("Afgter clean table")
-
-        io.in(data.match.name).emit("turnEnded", matchUpdated)
-
-        console.log("Turn ended with match updated: " + matchUpdated);
-        return
       })
       .catch((error) =>
         // Match should continue
@@ -103,19 +105,20 @@ function readyToPlay(socket, io) {
   socket.on("readyToPlay", function (data) {
 
     console.log("readyToPlay");
-    console.log("data received " + data)
     // Tell everyone which user is ready
     socket.to(data.match.name).emit("newUserReady", data.user);
 
     // Sending back to the user his object with cards assigned
-    var userWithCards = matchLogic.assignCards(data.user, data.match);
-
-    console.log("User received is + " + data.user)
-    console.log("User with cards object here")
-    console.log(userWithCards)
-    socket.emit("assignedCards", userWithCards);
+    matchLogic.assignCards(data.user, data.match).then(function (userWithCards) {
+      console.log("User received is + " + data.user)
+      console.log("User with cards object here")
+      console.log(userWithCards)
+      socket.emit("assignedCards", userWithCards);
 
     // AGGIORANRE IL MATCH NEL CLIENT
+    })
+
+    
     
     // match updated wit new player ready
     matchLogic.incrementActualPlayers(data.match);

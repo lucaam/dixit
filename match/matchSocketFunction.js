@@ -1,26 +1,31 @@
 const matchService = require("./matchService");
+// const matchServiceRedis = require("./matchServiceRedis");
+
 const userService = require("../user/userService");
+// const userServiceRedis = require("../user/userServiceRedis.js");
 
 function assignCards(user, match) {
-  var extractedCards = matchService.extractCards(match, 2);
-  console.log("User.card = " + user.cards)
-  user.cards = extractedCards;
-  console.log("Extracted cards for username: " + user.username);
-  matchService.updateUserCards(match, user);
-  
-  var resultremovecards = matchService.removeCardsFromMatch(match, extractedCards)
-  console.log(resultremovecards + " risultato query rimozione")
+  return new Promise((resolve, reject) => {
+    matchService.getMatchByName(match.name).then(function (updatedMatch) {
+      console.log(updatedMatch);
+      var extractedCards = matchService.extractCards(updatedMatch, 2);
+      console.log("User.card = " + user.cards);
+      user.cards = extractedCards;
+      console.log("Extracted cards for username: " + user.username);
+      matchService.updateUserCards(updatedMatch, user);
 
+      matchService.removeCardsFromMatch(updatedMatch, extractedCards);
 
-  if (user.username == match.narrator.username) {
-    console.log("Updating narrator cards")
-    matchService.updateNarratorCards(match, user);
-  } else {
-    console.log("Normal user cards cards")
+      if (user.username == match.narrator.username) {
+        console.log("Updating narrator cards");
+        matchService.updateNarratorCards(updatedMatch, user);
+      } else {
+        console.log("Normal user cards cards");
+      }
 
-  }
-
-  return user;
+      return resolve(user);
+    });
+  });
 }
 
 function incrementActualPlayers(match) {
@@ -73,7 +78,7 @@ function endTurn(matchName) {
     var selectedCards = 0;
     matchService.getMatchByName(matchName).then(function (result) {
       console.log("List of cards I am evaluating " + result.cardsOnTable);
-      for (var card in result.cardsOnTable) {
+      for (let card in result.cardsOnTable) {
         console.log("Evaluating: " + result.cardsOnTable[card]);
 
         if (result.cardsOnTable[card].selected != undefined) {
@@ -114,7 +119,7 @@ function setNewNarrator(match) {
 
 // Help find a user by username inside an array of users
 function findUserByUsername(user, users) {
-  for (var i = 0; i < users.length; i++) {
+  for (let i = 0; i < users.length; i++) {
     if (users[i].username == user.username) {
       return i;
     }
@@ -123,17 +128,15 @@ function findUserByUsername(user, users) {
 }
 
 function removeSelectedCard(user, match) {
-   
-  var cardFound = match.cardsOnTable.find(card => user.cards.includes(card))
-  console.log("card to be removed: " + cardFound)
+  var cardFound = match.cardsOnTable.find((card) => user.cards.includes(card));
+  console.log("card to be removed: " + cardFound);
 
   user.cards.splice(cardFound, 1);
 
-  console.log("user.cards.length should be 1 and is = " + user.cards.length)
+  console.log("user.cards.length should be 1 and is = " + user.cards.length);
 
   matchService.updateUserCards(match, user);
   return user;
-
 }
 
 // Says if a card belongs to the narrator
@@ -159,19 +162,20 @@ function assignPoints(match) {
   console.log(
     "I am in assignPoints func, I have to evaluate #" + match.users.length
   );
-  for (var i = 0; i < match.users.length; i++) {
+  for (let i = 0; i < match.users.length; i++) {
     var user = match.users[i];
     console.log("Actual user in for is " + user.username);
+    console.log("Actual iterator num " + i);
+
     if (user.username == match.narrator.username) {
       // Evaluating narrator user
       console.log(user.username + " is the narrator ");
       console.log("Mie cardsontable = " + match.cardsOnTable);
-     for(var k=0; k < match.cardsOnTable.length; k++ ){
-       var narratorCard = match.cardsOnTable[k]
+      for (let k = 0; k < match.cardsOnTable.length; k++) {
+        var narratorCard = match.cardsOnTable[k];
         console.log("actual card in for: " + narratorCard.name);
         if (belongsToNarrator(match.narrator, narratorCard)) {
           console.log("This card belongs to the narrator");
-          console.log("and this is the object " + narratorCard);
 
           if (narratorCard.selected.length == match.expectedPlayers - 1) {
             // 0 points to narrator
@@ -194,17 +198,16 @@ function assignPoints(match) {
         }
       }
     } else {
+      console.log("not the narrator")
       // If normal user
-      for (var x = 0; x < match.cardsOnTable.length; x++) {
-        var card = match.cardsOnTable[x];
+      for (let z = 0; z < match.cardsOnTable.length; z++) {
+        console.log("z index = " + z)
+        var card = match.cardsOnTable[z];
         if (
-          card.selected.filter((x) => x.username == user.username).length > 0
+          card.selected.filter((ob) => ob.username == user.username).length > 0
         ) {
           console.log("user " + user.username + " selected card " + card.name);
-          console.log(
-            "filter lenght = " +
-              card.selected.filter((x) => x.username == user.username).length
-          );
+
           // The current user selected the card
           if (belongsToNarrator(match.narrator, card)) {
             // The user selected the right card, earns 2 points
@@ -230,7 +233,6 @@ function assignPoints(match) {
           console.log(
             "user " + user.username + " NOT SELECTED card " + card.name
           );
-          continue;
         }
       }
     }
@@ -249,6 +251,28 @@ function assignPoints(match) {
   return match;
 }
 
+function removeUsersCards(match) {
+  return new Promise((resolve, reject) => {
+    for (let a = 0; a < match.users.length; a++) {
+      removeSelectedCard(match.users[a], match).then(function (user) {
+        match.users[a] = user;
+      });
+    }
+    return resolve(match);
+  });
+}
+
+function assignCardsUsers(match) {
+  return new Promise((resolve, reject) => {
+    for (let b = 0; b < match.users.length; b++) {
+      assignCards(match.users[b], match).then(function (user) {
+        match.users[b] = user;
+      });
+    }
+    return resolve(match);
+  });
+}
+
 module.exports = {
   assignCards,
   incrementActualPlayers,
@@ -261,4 +285,5 @@ module.exports = {
   removeSelectedCard,
   assignPoints,
   cleanTable,
+  removeUsersCards,
 };
