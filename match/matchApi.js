@@ -34,7 +34,7 @@ router.post("/", verify, async(request, response) => {
         savedMatch.narrator = decodeToken.user
         savedMatch.users = savedMatch.users || []
         savedMatch.users.push(decodeToken.user)
-
+        
         response.json(savedMatch);
     } catch (err) {
         response.status(400).json({ message: err.message, error: err});

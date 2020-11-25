@@ -72,7 +72,9 @@ function cleanCardOnTable(match) {
 }
 
 function removeCardsFromMatch(match, cards) {
-    return Match.updateOne({name: match.name}, {$pull: {"cards": {$in: cards}}} ).exec()
+    // return Match.updateOne({name: match.name}, {$pull: {"cards": {$in: cards}}} ).exec()
+    // Ma sta cosa se po fa?? Bleee
+    return Match.updateOne({name: match.name}, {$pull: {"cards": {"$or": cards}}} ).exec()
 }
 
 module.exports = { removeCardsFromMatch, cleanCardOnTable, updateNarratorCards, getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, incrementActualPlayers, selectCardOnTable, setNarrator, addCardOnTable, updateUserCards}
