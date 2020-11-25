@@ -6,134 +6,136 @@ const Card = require('../card/cardModel')
 
 
 function hello(socket, io) {
-  socket.on("hello", function () {
-    socket.emit("hello", { message: "Hello man!" });
-  });
+    socket.on("hello", function() {
+        socket.emit("hello", { message: "Hello man!" });
+    });
 }
 
 function addCardOnTable(socket, io) {
-  socket.on("addCardOnTable", function (data) {
-    // Update card on table
-    matchLogic.addCardOnTable(data.match.name, data.card);
+    socket.on("addCardOnTable", function(data) {
+        // Update card on table
+        matchLogic.addCardOnTable(data.match.name, data.card);
 
-    // Tell everyone that a new card is available on the table
-    socket.to(data.match.name).emit("newCardOnTable", data.card);
+        // Tell everyone that a new card is available on the table
+        socket.to(data.match.name).emit("newCardOnTable", data.card);
 
 
-    matchLogic
-    .startTurn(data.match.name)
-    .then(function (result) {
-    // Se il numero di carte sul tavolo e' uguale al numero di giocatori allora gli utenti possono selezionare le carte
-    console.log("Turn can start before emit ");
-  
-      io.in(data.match.name).emit("turnStart", result)
-      console.log("Turn can start after emit " + result);
-    })
-    .catch((error) =>
-      console.log("Turn cannot start")
-    );
-  });
+        matchLogic
+            .startTurn(data.match.name)
+            .then(function(result) {
+                // Se il numero di carte sul tavolo e' uguale al numero di giocatori allora gli utenti possono selezionare le carte
+                console.log("Turn can start before emit ");
+
+                io.in(data.match.name).emit("turnStart", result)
+                console.log("Turn can start after emit " + result);
+            })
+            .catch((error) =>
+                console.log("Turn cannot start")
+            );
+    });
 }
 
 function selectCard(socket, io) {
-  socket.on("selectCard", function (data) {
-    var cardSelected = data.card;
-    // Update card on table
-    matchLogic.selectCardOnTable(data.match.name, cardSelected, data.user);
+    socket.on("selectCard", function(data) {
+        var cardSelected = data.card;
+        // Update card on table
+        matchLogic.selectCardOnTable(data.match.name, cardSelected, data.user);
 
-    // Tell everyone that a new card is available on the table
-    socket.to(data.match.name).emit("newCardSelected", cardSelected);
-    console.log("before evaluating turn end");
-    matchLogic
-      .endTurn(data.match.name)
-      .then(function (result) {
-
-
-        console.log("Posso far terminare il turno e preparare il nuovo turno")
-
-        // Match can stop and we can evaluate who took how many points
-
-        // Assegnare i punti
-
-        var matchUpdated = matchLogic.assignPoints(result)
-
-        console.log("Before set new narrator")
-        console.log("this is the match I am passing to set new narrator" + matchUpdated)
-        // Nuovo narratore
-        matchUpdated = matchLogic.setNewNarrator(matchUpdated);
-        console.log("After set new narrator")
+        // Tell everyone that a new card is available on the table
+        socket.to(data.match.name).emit("newCardSelected", cardSelected);
+        console.log("before evaluating turn end");
+        matchLogic
+            .endTurn(data.match.name)
+            .then(function(result) {
 
 
-        
+                console.log("Posso far terminare il turno e preparare il nuovo turno")
 
-         matchLogic.removeUsersCards(matchUpdated).then(function (update) {
-          console.log("Afgter removeSelectedCard from user")
+                // Match can stop and we can evaluate who took how many points
 
-          // Assegnare nuove carte utenti
-         
-          matchLogic.assignCardsUsers(update).then(function (update1) {
-            
-          console.log("Afgter assign cards from user")
-  
-          matchUpdated = matchLogic.cleanTable(update1)      
-         
-          console.log("Afgter clean table")
-  
-          io.in(data.match.name).emit("turnEnded", matchUpdated)
-  
-          console.log("Turn ended with match updated: " + matchUpdated);
-          
-          })
-  
-        })
+                // Assegnare i punti
 
-       
-      })
-      .catch((error) =>
-        // Match should continue
-        console.log("Turn shuld continue")
-      );
+                var matchUpdated = matchLogic.assignPoints(result)
 
-      return
-  });
+                console.log("Before set new narrator")
+                console.log("this is the match I am passing to set new narrator" + matchUpdated)
+                    // Nuovo narratore
+                matchUpdated = matchLogic.setNewNarrator(matchUpdated);
+                console.log("After set new narrator")
 
-  return
+
+
+
+                matchLogic.removeUsersCards(matchUpdated).then(function(update) {
+                    console.log("Afgter removeSelectedCard from user")
+
+                    // Assegnare nuove carte utenti
+
+                    matchLogic.assignCardsUsers(update).then(function(update1) {
+                        console.log("Afgter assign cards update1 length user[]0" + update1.users[0].cards.length)
+
+                        console.log("Afgter assign cards from user")
+
+                        matchUpdated = matchLogic.cleanTable(update1)
+                        console.log("Afgter assign cards cards length user[]0" + matchUpdated.users[0].cards.length)
+
+                        console.log("Afgter clean table")
+
+                        io.in(data.match.name).emit("turnEnded", matchUpdated)
+
+                        console.log("Turn ended with match updated: " + matchUpdated);
+
+                    })
+
+                })
+
+
+            })
+            .catch((error) =>
+                // Match should continue
+                console.log("Turn shuld continue")
+            );
+
+        return
+    });
+
+    return
 }
 
 function readyToPlay(socket, io) {
-  // Data must contain the 2 objects: user, match
-  socket.on("readyToPlay", function (data) {
+    // Data must contain the 2 objects: user, match
+    socket.on("readyToPlay", function(data) {
 
-    console.log("readyToPlay");
-    // Tell everyone which user is ready
-    socket.to(data.match.name).emit("newUserReady", data.user);
+        console.log("readyToPlay");
+        // Tell everyone which user is ready
+        socket.to(data.match.name).emit("newUserReady", data.user);
 
-    // Sending back to the user his object with cards assigned
-    matchLogic.assignCards(data.user, data.match).then(function (userWithCards) {
-      console.log("User received is + " + data.user)
-      console.log("User with cards object here")
-      console.log(userWithCards)
-      socket.emit("assignedCards", userWithCards);
+        // Sending back to the user his object with cards assigned
+        matchLogic.assignCards(data.user, data.match).then(function(userWithCards) {
+            console.log("User received is + " + data.user)
+            console.log("User with cards object here")
+            console.log(userWithCards)
+            socket.emit("assignedCards", userWithCards);
 
-    // AGGIORANRE IL MATCH NEL CLIENT
-    })
+            // AGGIORANRE IL MATCH NEL CLIENT
+        })
 
-    
-    
-    // match updated wit new player ready
-    matchLogic.incrementActualPlayers(data.match);
 
-    // When expectedPlayers is equals to actualPlayers the match should start
-    matchLogic
-      .readyToStart(data.match.name)
-      .then(function (res) {
-          console.log("prima di io.in")
-        io.in(data.match.name).emit("readyToStart", "Siamo pronti a giocare amico")
-    })
-      .catch((error) => console.log("Not ready to play"));
-  });
 
-  return
+        // match updated wit new player ready
+        matchLogic.incrementActualPlayers(data.match);
+
+        // When expectedPlayers is equals to actualPlayers the match should start
+        matchLogic
+            .readyToStart(data.match.name)
+            .then(function(res) {
+                console.log("prima di io.in")
+                io.in(data.match.name).emit("readyToStart", "Siamo pronti a giocare amico")
+            })
+            .catch((error) => console.log("Not ready to play"));
+    });
+
+    return
 }
 
 
