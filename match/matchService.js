@@ -81,4 +81,9 @@ function removeCardsFromMatch(match, cards){
     return matchRepository.removeCardsFromMatch(match, cards);
 }
 
-module.exports = { removeCardsFromMatch, cleanCardOnTable, updateNarratorCards, getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, extractCards, incrementActualPlayers, setNarrator, addCardOnTable, selectCardOnTable, updateUserCards}
+function updateUserScore(match, user) {
+    return matchRepository.updateUserScore(match, user);
+
+}
+
+module.exports = { updateUserScore, removeCardsFromMatch, cleanCardOnTable, updateNarratorCards, getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, extractCards, incrementActualPlayers, setNarrator, addCardOnTable, selectCardOnTable, updateUserCards}
