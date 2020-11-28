@@ -58,7 +58,6 @@ function selectCard(socket, io) {
                 var matchUpdated = matchLogic.assignPoints(result)
 
                 console.log("Before set new narrator")
-                console.log("this is the match I am passing to set new narrator" + matchUpdated)
                     // Nuovo narratore
                 matchUpdated = matchLogic.setNewNarrator(matchUpdated);
                 console.log("After set new narrator")
@@ -82,12 +81,12 @@ function selectCard(socket, io) {
                         console.log("Afgter clean table")
                         if(matchLogic.endMatch(matchUpdated)){
                             io.in(data.match.name).emit("endMatch", matchUpdated)
-                            console.log("Match ended: " + matchUpdated);
+                            console.log("Match ended: ");
 
                         }
                         else{
                             io.in(data.match.name).emit("turnEnded", matchUpdated)
-                            console.log("Turn ended with match updated: " + matchUpdated);
+                            console.log("Turn ended with match updated: ");
 
                         }
 

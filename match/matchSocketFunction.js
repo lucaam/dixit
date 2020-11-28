@@ -144,15 +144,30 @@ function findUserByUsername(user, users) {
 }
 
 function removeSelectedCard(user, match) {
-  var cardFound = match.cardsOnTable.find((card) => user.cards.includes(card));
-  console.log("card to be removed: " + cardFound);
 
-  user.cards.splice(match.cardsOnTable.indexOf(cardFound), 1);
+  var cardFoundIndex
+  for(let c =0; match.cardsOnTable.length > c; c++){
+    for(let d=0; user.cards.length > d; d++){
+      if(match.cardsOnTable[c].name == user.cards[d].name){
+        cardFound = user.cards[d]
+        break;
+      }
+    }
+  }
+  if(cardFound != undefined){
+      console.log("card to be removed: " + cardFound + " the index is "  +user.cards.indexOf(cardFound));
 
-  console.log("user.cards.length should be 1 and is = " + user.cards.length);
+    user.cards.splice(user.cards.indexOf(cardFound), 1);
+  
+    console.log("user.cards.length should be 1 and is = " + user.cards.length);
+  
+    matchService.updateUserCards(match, user);
+    return user;
 
-  matchService.updateUserCards(match, user);
-  return user;
+  }else{
+    console.log("Problema, nessuna carta trovata")
+  }
+  
 }
 
 // Says if a card belongs to the narrator
