@@ -56,7 +56,13 @@ function incrementActualPlayers(name, number) {
 
 function updateUserCards(match, user){
     console.log("updating user cards")
-    return Match.updateOne({name: match.name}, {$set: {"users.$[el].cards": user.cards}}, {arrayFilters: [{"el.username": user.username}]} ).exec()
+    return Match.updateOne({name: match.name}, {$set: {"users.$[el].cards": user.cards}}, {arrayFilters: [{"el.username": user.username}]}, (err) => {
+        if(err){
+            console.log("Error during update user cards", err)
+        } else {
+            console.log("Update user cards worked with no errors")
+        }
+    }).exec()
 }
 
 function updateNarratorCards(match, user) {
@@ -67,8 +73,14 @@ function updateNarratorCards(match, user) {
 }
 
 function cleanCardOnTable(match) {
-    console.log("cleaning cards on table")
-    return Match.updateOne({name: match.name}, {$set: {cardsOnTable: []}} ).exec()
+    console.log("cleaning cards on table for match + " + match.name)
+    return Match.updateOne({name: match.name}, {$set: {cardsOnTable: []}}, (err) => {
+        if(err){
+            console.log("Error during cleanCardOnTable", err)
+        } else {
+            console.log("cleanCardOnTable worked with no errors")
+        }
+    }).exec()
 }
 
 function removeCardsFromMatch(match, cards) {
@@ -77,4 +89,14 @@ function removeCardsFromMatch(match, cards) {
     return Match.updateOne({name: match.name}, {$pull: {"cards": {"$or": cards}}} ).exec()
 }
 
-module.exports = { removeCardsFromMatch, cleanCardOnTable, updateNarratorCards, getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, incrementActualPlayers, selectCardOnTable, setNarrator, addCardOnTable, updateUserCards}
+function updateUserScore(match, user) {
+    return Match.updateOne({name: match.name}, {$set: {"users.$[el].score": user.score}}, {arrayFilters: [{"el.username": user.username}]}, (err) => {
+        if(err){
+            console.log("Error during update user score", err)
+        } else {
+            console.log("Update user score worked with no errors")
+        }
+    }).exec()
+
+}
+module.exports = { updateUserScore, removeCardsFromMatch, cleanCardOnTable, updateNarratorCards, getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, incrementActualPlayers, selectCardOnTable, setNarrator, addCardOnTable, updateUserCards}
