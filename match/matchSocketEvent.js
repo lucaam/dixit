@@ -80,10 +80,17 @@ function selectCard(socket, io) {
                         console.log("Afgter assign cards cards length user[]0" + matchUpdated.users[0].cards.length)
 
                         console.log("Afgter clean table")
+                        if(matchLogic.endMatch(matchUpdated)){
+                            io.in(data.match.name).emit("endMatch", matchUpdated)
+                            console.log("Match ended: " + matchUpdated);
 
-                        io.in(data.match.name).emit("turnEnded", matchUpdated)
+                        }
+                        else{
+                            io.in(data.match.name).emit("turnEnded", matchUpdated)
+                            console.log("Turn ended with match updated: " + matchUpdated);
 
-                        console.log("Turn ended with match updated: " + matchUpdated);
+                        }
+
 
                     })
 
@@ -96,7 +103,6 @@ function selectCard(socket, io) {
                 console.log("Turn shuld continue")
             );
 
-        return
     });
 
     return
