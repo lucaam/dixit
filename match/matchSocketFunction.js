@@ -21,7 +21,6 @@ function assignCards(user, match) {
         console.log("carta estratta is" + extractedCards[0].name);
       }
 
-      console.log("User.cards siuze: " + user.cards.length);
 
       console.log("Extracted cards for username: " + user.username);
       matchService.updateUserCards(updatedMatch, user);
