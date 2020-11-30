@@ -4,7 +4,7 @@ const cardService = require('./cardService');
 const { insertValidation } = require('./cardValidation')
 const verify = require('../user/verifyToken');
 
-router.post('/', verify ,async (request, response) => {
+router.post('/' ,async (request, response) => {
     const {error} = insertValidation(request.body);
 
     if(error) return response.status(400).send(error.details[0].message)
@@ -21,7 +21,7 @@ router.post('/', verify ,async (request, response) => {
     }
 })
 
-router.get('/', verify ,async (request, response) => {
+router.get('/' ,async (request, response) => {
 
     try{
         const cards = await cardService.getCards()
@@ -31,7 +31,7 @@ router.get('/', verify ,async (request, response) => {
       }
 })
 
-router.get('/:cardId', verify, async (request, response) => {
+router.get('/:cardId', async (request, response) => {
     try{
     const card = await cardService.getCard(request.params.cardId)
     response.json(card)
