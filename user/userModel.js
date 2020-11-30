@@ -7,19 +7,19 @@ const userSchema = new Schema({
     name: {
         type: String,
         required: true,
-        min: 6,
+        min: 2,
         max: 255
     },
     surname: {
         type: String,
         required: true,
-        min: 6,
+        min: 2,
         max: 255
     },
     username: {
         type: String,
         required: true,
-        min: 6,
+        min: 4,
         max: 255
     },
     email: {
@@ -32,7 +32,7 @@ const userSchema = new Schema({
         type: String,
         required: true,
         max: 1024,
-        min: 6
+        min: 8
     },
     registrationDate: {
         type: Date,

@@ -7,7 +7,7 @@ const matchSchema = new Schema({
     name: {
         type: String,
         required: true,
-        min: 6,
+        min: 4,
         max: 255
     },
     registrationDate: {

@@ -6,7 +6,7 @@ const registrationValidation = (data) => {
         surname: Joi.string().min(2).required(),
         username: Joi.string().min(4).required(),
         email: Joi.string().min(6).required().email(),
-        password: Joi.string().min(6).required(),
+        password: Joi.string().min(8).required(),
         role: Joi.string().valid('user', 'admin')
     });
 
