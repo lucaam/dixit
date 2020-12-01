@@ -79,12 +79,12 @@ function selectCard(socket, io) {
                         console.log("Afgter assign cards cards length user[]0" + matchUpdated.users[0].cards.length)
 
                         console.log("Afgter clean table")
-                        if(matchLogic.endMatch(matchUpdated)){
+                        var matchEnd = matchLogic.endMatch(matchUpdated);
+                        if (matchEnd != false) {
                             io.in(data.match.name).emit("endMatch", matchUpdated)
                             console.log("Match ended: ");
 
-                        }
-                        else{
+                        } else if (matchEnd == false) {
                             io.in(data.match.name).emit("turnEnded", matchUpdated)
                             console.log("Turn ended with match updated: ");
 
