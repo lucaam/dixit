@@ -6,13 +6,13 @@ const cardSchema = new Schema({
     name: {
         type: String,
         required: true,
-        min: 6,
+        min: 2,
         max: 255
     },
     picture: {
         type: String,
         required: true,
-        min: 1,
+        min: 4,
         max: 255
     },
     selected: {
@@ -20,7 +20,7 @@ const cardSchema = new Schema({
         required: false,
         default: undefined
     }
-    
+
 });
 
 module.exports = mongoose.model('Card', cardSchema);
