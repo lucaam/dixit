@@ -340,16 +340,26 @@ function assignCardsUsers(match) {
 }
 
 function endMatch(match) {
-    var moreThan30 = match.users.filter((user) => user.score == 30);
-    if (moreThan30.length == 1) {
-        console.log("1 player ha vinto: " + moreThan30[0].username);
+    var moreThan30 = match.users.filter((user) => user.score >= 30);
+    if (moreThan30.length > 0) {
+        if (moreThan30.length == 1) {
+            console.log("1 player ha vinto: " + moreThan30[0].username);
+            console.log(moreThan30)
+            moreThan30[0].victories += 1
+            userService.setVictories(moreThan30[0].id, moreThan30[0].victories)
+        }
+
+        if (moreThan30.length > 1) {
+            console.log("Diversi giocatori sono arrivati a 30", moreThan30);
+            moreThan30.forEach(element => {
+                element.victories += 1
+                userService.setVictories(element.id, element.victories)
+            });
+        }
+        // Bisogna settare le sconfitte
 
         return moreThan30;
-    }
 
-    if (moreThan30.length > 1) {
-        console.log("Diversi giocatori sono arrivati a 30", moreThan30);
-        return moreThan30;
     }
 
     if (match.cards.length == 0 || match.cards.length < match.users.length) {
@@ -359,8 +369,26 @@ function endMatch(match) {
         var userHighestScore = match.users.reduce((a, b) =>
             a.score > b.score ? a : b
         )
-        console.log("Dovrebbe aver vinto :" + userHighestScore);
+
+        if (userHighestScore.length == 1) {
+            console.log("1 player ha vinto: " + userHighestScore[0].username);
+            console.log(userHighestScore)
+            userHighestScore[0].victories += 1
+            userService.setVictories(userHighestScore[0].id, userHighestScore[0].victories)
+        }
+
+        if (userHighestScore.length > 1) {
+            console.log("Diversi giocatori hanno vinto", userHighestScore);
+            userHighestScore.forEach(element => {
+                element.victories += 1
+                userService.setVictories(element.id, element.victories)
+            });
+        }
+
+        // Bisogna settare le sconfitte
+
         return userHighestScore;
+
     }
 
     console.log("Non termina il match");
