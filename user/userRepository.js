@@ -18,7 +18,7 @@ function getUserByUsername(username) {
 }
 //         request.body.email, request.body.name, hashedPassword, request.body.role, request.body.surname, request.body.username)
 
-function createUser(email, name, password, role, username, surname) {
+function createUser(email, name, password, role, surname, username) {
     const user = new User({
         name: name,
         surname: surname,
