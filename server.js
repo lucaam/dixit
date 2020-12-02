@@ -29,19 +29,16 @@ app.use('/api/v1/matches', matchesRoute);
 
 // make all the files in 'public' available
 // https://expressjs.com/en/starter/static-files.html
-app.use(express.static("public"));
+app.use('/', express.static("public/dixit-frontend"));
+app.use('/img', express.static("public/img"));
+app.use('/js', express.static("public/js"));
 
-// https://expressjs.com/en/starter/basic-routing.html
-app.get("/", (request, response) => {
-    response.sendFile(__dirname + "/views/index.html");
-});
-
-app.get("/socket", (request, response) => {
-    response.sendFile(__dirname + "/views/socket.html");
+app.get("/*", function(request, res) {
+    res.sendFile('/public/dixit-frontend/index.html', { root: __dirname });
 });
 
 //The 404 Route
-app.get("*", function(request, response) {
+app.get("/*", function(request, response) {
     response.sendFile(__dirname + "/views/error/404.html");
 });
 
@@ -53,10 +50,10 @@ var listener = app.listen(process.env.PORT || 3000, () => {
 socket.startSocket(listener)
 
 process
-  .on('unhandledRejection', (reason, p) => {
-    console.error(reason, 'Unhandled Rejection at Promise', p);
-  })
-  .on('uncaughtException', err => {
-    console.error(err, 'Uncaught Exception thrown');
-    process.exit(1);
-  });
+    .on('unhandledRejection', (reason, p) => {
+        console.error(reason, 'Unhandled Rejection at Promise', p);
+    })
+    .on('uncaughtException', err => {
+        console.error(err, 'Uncaught Exception thrown');
+        process.exit(1);
+    });
