@@ -35,6 +35,85 @@ function addCardOnTable(socket, io) {
     });
 }
 
+function forceTurnStart(socket, io) {
+    socket.on("forceTurnStart", function(data) {
+        // Update card on table
+
+        // Tell everyone that a new card is available on the table
+        io.in(data.match.name).emit("turnStart", data)
+
+
+
+    });
+}
+
+function forceTurnEnd(socket, io) {
+    socket.on("forceTurnEnd", function(data) {
+        // Update card on table
+
+        matchLogic
+            .endTurn(data.match.name)
+            .then(function(result) {
+
+
+                console.log("Posso far terminare il turno e preparare il nuovo turno")
+
+                // Match can stop and we can evaluate who took how many points
+
+                // Assegnare i punti
+
+                var matchUpdated = matchLogic.assignPoints(result)
+
+                console.log("Before set new narrator")
+                    // Nuovo narratore
+                matchUpdated = matchLogic.setNewNarrator(matchUpdated);
+                console.log("After set new narrator")
+
+
+
+
+                matchLogic.removeUsersCards(matchUpdated).then(function(update) {
+                    console.log("Afgter removeSelectedCard from user")
+
+                    // Assegnare nuove carte utenti
+
+                    matchLogic.assignCardsUsers(update).then(function(update1) {
+                        console.log("Afgter assign cards update1 length user[]0" + update1.users[0].cards.length)
+
+                        console.log("Afgter assign cards from user")
+
+                        matchUpdated = matchLogic.cleanTable(update1)
+                        console.log("Afgter assign cards cards length user[]0" + matchUpdated.users[0].cards.length)
+
+                        console.log("Afgter clean table")
+                        var matchEndUsers = matchLogic.endMatch(matchUpdated);
+                        if (matchEndUsers != false) {
+                            io.in(data.match.name).emit("endMatch", matchEndUsers)
+                            console.log("Match ended: ", matchEndUsers);
+
+                        } else if (matchEndUsers == false) {
+                            io.in(data.match.name).emit("turnEnded", matchUpdated)
+                            console.log("Turn ended with match updated: ");
+
+                        }
+
+
+                    })
+
+                })
+
+
+            })
+            .catch((error) =>
+                // Match should continue
+                console.log("Turn shuld continue")
+            );
+
+
+
+    });
+}
+
 function selectCard(socket, io) {
     socket.on("selectCard", function(data) {
         var cardSelected = data.card;
@@ -144,4 +223,4 @@ function readyToPlay(socket, io) {
 }
 
 
-module.exports = { hello, addCardOnTable, readyToPlay, selectCard };
+module.exports = { hello, addCardOnTable, readyToPlay, selectCard, forceTurnEnd, forceTurnStart };
