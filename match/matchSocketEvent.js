@@ -207,20 +207,46 @@ function readyToPlay(socket, io) {
 
 
         // match updated wit new player ready
-        matchLogic.incrementActualPlayers(data.match);
+        matchLogic.incrementActualPlayers(data.match).then(function(matchWithUpdatedUser) {
+            matchLogic
+                .readyToStart(matchWithUpdatedUser)
+                .then(function(res) {
+                    console.log("prima di io.in")
+                    io.in(data.match.name).emit("readyToStart", "Siamo pronti a giocare amico")
+                })
+                .catch((error) => console.log("Not ready to play"));
+        });
+    })
 
-        // When expectedPlayers is equals to actualPlayers the match should start
-        matchLogic
-            .readyToStart(data.match.name)
-            .then(function(res) {
-                console.log("prima di io.in")
-                io.in(data.match.name).emit("readyToStart", "Siamo pronti a giocare amico")
-            })
-            .catch((error) => console.log("Not ready to play"));
-    });
+    // When expectedPlayers is equals to actualPlayers the match should start
+
 
     return
 }
 
 
-module.exports = { hello, addCardOnTable, readyToPlay, selectCard, forceTurnEnd, forceTurnStart };
+function forceTurnReady(socket, io) {
+    // Data must contain the 2 objects: user, match
+    socket.on("forceTurnReady", function(data) {
+
+        console.log("forceReady");
+
+
+        // match updated wit new player ready
+        matchLogic
+            .readyToStart(data)
+            .then(function(res) {
+                console.log("prima di io.in forzato")
+                io.in(data.match.name).emit("readyToStart", "Siamo pronti a giocare amico - forzato")
+            })
+            .catch((error) => console.log("Not ready to play forzato"));
+    });
+
+
+    // When expectedPlayers is equals to actualPlayers the match should start
+
+
+    return
+}
+
+module.exports = { forceTurnReady, hello, addCardOnTable, readyToPlay, selectCard, forceTurnEnd, forceTurnStart };

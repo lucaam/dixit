@@ -27,6 +27,8 @@ exports.startSocket = function startIo(server) {
         matchEvent.selectCard(socket, io)
         matchEvent.forceTurnStart(socket, io)
         matchEvent.forceTurnEnd(socket, io)
+        matchEvent.forceTurnReady(socket, io)
+
 
 
     });
