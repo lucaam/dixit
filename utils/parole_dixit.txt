@@ -30,7 +30,7 @@ scala uccelli, img314.jpg
 carte, img315.jpg
 scacchi, img316.jpg
 quadro, img317.jpg
-champagne, img138.jpg
+champagne, img318.jpg
 giraffa, img319.jpg
 note musicali, img320.jpg
 binocolo, img321.jpg
@@ -97,7 +97,7 @@ confusione, img382.jpg
 cuore, img383.jpg
 portarossa, img384.jpg
 capelli stellati, img385.jpg
-fogli musicali, img386.jpg
+fogli musicali, img386.png
 luce, img387.jpg
 culla, img388.jpg
 re, img389.jpg
