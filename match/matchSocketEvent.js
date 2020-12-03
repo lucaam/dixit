@@ -233,14 +233,10 @@ function forceTurnReady(socket, io) {
 
 
         // match updated wit new player ready
-        matchLogic
-            .readyToStart(data)
-            .then(function(res) {
-                console.log("prima di io.in forzato")
-                io.in(data.match.name).emit("readyToStart", "Siamo pronti a giocare amico - forzato")
-            })
-            .catch((error) => console.log("Not ready to play forzato"));
-    });
+
+        console.log("prima di io.in forzato")
+        io.in(data.match.name).emit("readyToStart", "Siamo pronti a giocare amico - forzato")
+    })
 
 
     // When expectedPlayers is equals to actualPlayers the match should start
