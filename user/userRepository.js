@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const User = require('./userModel');
 
 function getUser(id) {
-    return User.findOne({ _id: id }).exec()
+    return User.findOne({ _id: id })
 }
 
-function getUsers(id) {
+function getUsers() {
     return User.find().exec();
 }
 

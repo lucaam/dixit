@@ -90,34 +90,14 @@ router.delete('/delete/cards/:userId', verify, async(request, response) => {
     }
 });
 
-router.get("/:email", verify, async(request, response) => {
-    try {
-        const user = await userService.getUserByEmail(request.params.email)
-        response.json(user);
-    } catch (err) {
-        response.json({ message: err });
-    }
-});
-
 router.get("/:userId",  verify, async(request, response) => {
     try {
-        console.log("accesso in get userid")
+        console.log("accesso in get userid con id = " + request.params.userId)
         const user = await userService.getUser(request.params.userId)
-        console.log(user)
-        response.json(user);
-    } catch (err) {
-        response.json({ message: err });
-    }
-});
+        response.status(200).send({ user });
 
-router.get("/:username",  verify, async(request, response) => {
-    try {
-        console.log("accesso in get userid")
-        const user = await userService.getUser(request.params.username)
-        console.log(user)
-        response.json(user);
     } catch (err) {
-        response.json({ message: err });
+        response.status(500).json({ message: err });
     }
 });
 

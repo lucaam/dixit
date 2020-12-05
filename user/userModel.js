@@ -72,7 +72,15 @@ const userSchema = new Schema({
         type: Number,
         default: 0,
         required: false
-    }
+    },
+    avatar: {
+        type: String,
+        required: false,
+        min: 2,
+        max: 255,
+        default: 'default.png'
+
+    },
 
 });
 
