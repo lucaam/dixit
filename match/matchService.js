@@ -85,5 +85,19 @@ function updateUserScore(match, user) {
     return matchRepository.updateUserScore(match, user);
 
 }
+function removeUser(name, user) {
+    return matchRepository.removeUser(name, user);
 
-module.exports = { updateUserScore, removeCardsFromMatch, cleanCardOnTable, updateNarratorCards, getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, extractCards, incrementActualPlayers, setNarrator, addCardOnTable, selectCardOnTable, updateUserCards}
+}
+function decrementExpectedPlayers(name, number) {
+    return matchRepository.decrementExpectedPlayers(name, number);
+
+}
+function decrementActualPlayers(name, number) {
+    return matchRepository.decrementActualPlayers(name, number);
+
+}
+
+
+
+module.exports = { decrementActualPlayers, decrementExpectedPlayers, removeUser, updateUserScore, removeCardsFromMatch, cleanCardOnTable, updateNarratorCards, getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, extractCards, incrementActualPlayers, setNarrator, addCardOnTable, selectCardOnTable, updateUserCards}

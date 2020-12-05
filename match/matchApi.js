@@ -41,7 +41,6 @@ router.post("/", verify, async(request, response) => {
     }
 });
 
-// Create match
 router.post("/join", verify, async(request, response) => {
     const { error } = joinMatchValidation(request.body);
 
@@ -62,6 +61,31 @@ router.post("/join", verify, async(request, response) => {
         savedMatch.users.push(decodeToken.user)
 
         response.json(savedMatch);
+    } catch (err) {
+        response.status(400).json({ message: err.message });
+    }
+});
+
+// Create match
+router.post("/exit", verify, async(request, response) => {
+
+
+    console.log("response " + request.body.name, " bodyyyy")
+    const nameExists = await matchService.getMatchByName(request.body.name);
+
+    if (!nameExists)
+        return response
+            .status(400)
+            .send("Match with specified name does not exists");
+
+    try {
+        var decodeToken = jwt.decode(request.header('auth-token'))
+        var savedMatch = await matchService.removeUser(request.body.name, decodeToken);
+        savedMatch = await matchService.decrementExpectedPlayers(request.body.name, 1)
+        savedMatch = await matchService.decrementActualPlayers(request.body.name, 1)
+
+        response.status(200).json(savedMatch);
+
     } catch (err) {
         response.status(400).json({ message: err.message });
     }

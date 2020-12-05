@@ -99,4 +99,25 @@ function updateUserScore(match, user) {
     }).exec()
 
 }
-module.exports = { updateUserScore, removeCardsFromMatch, cleanCardOnTable, updateNarratorCards, getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, incrementActualPlayers, selectCardOnTable, setNarrator, addCardOnTable, updateUserCards}
+
+function removeUser(name, user) {
+    return Match.updateOne({name: name}, {$pull: {"users": {_id: user._id }}}, (err) => {
+        if(err){
+            console.log("Error during remove user from match", err)
+        } else {
+            console.log("Remove user from match worked with no errors")
+        }
+    }).exec()
+
+}
+
+function decrementExpectedPlayers(name, number) {
+    return Match.updateOne({ name: name }, { $inc: { expectedPlayers: -number } }).exec();
+
+}
+
+function decrementActualPlayers(name, number) {
+    return Match.updateOne({ name: name }, { $inc: { expectedPlayers: -number } }).exec();
+
+}
+module.exports = { decrementActualPlayers, decrementExpectedPlayers, removeUser, updateUserScore, removeCardsFromMatch, cleanCardOnTable, updateNarratorCards, getMatch, getMatches, createMatch, deleteMatch, getMatchByName, addUserToMatch, setCards, incrementActualPlayers, selectCardOnTable, setNarrator, addCardOnTable, updateUserCards}

@@ -245,4 +245,22 @@ function forceTurnReady(socket, io) {
     return
 }
 
+function exitGame(socket, io) {
+    // Data must contain the 2 objects: user, match
+    socket.on("exitGame", function(data) {
+
+        console.log("exitGame");
+
+
+        // match updated wit new player ready
+        io.in(data.match.name).emit("userExit", data)
+    })
+
+
+    // When expectedPlayers is equals to actualPlayers the match should start
+
+
+    return
+}
+
 module.exports = { forceTurnReady, hello, addCardOnTable, readyToPlay, selectCard, forceTurnEnd, forceTurnStart };
