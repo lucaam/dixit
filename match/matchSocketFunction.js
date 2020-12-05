@@ -368,6 +368,15 @@ function endMatch(match) {
         }
         // Bisogna settare le sconfitte
 
+        var filteredWithLosers = match.users.filter(function(x) { 
+            return moreThan30.indexOf(x) < 0;
+          });
+
+          filteredWithLosers.forEach(element => {
+              element.defeats += 1
+              userService.setDefeats(element.id, element.defeats)
+          });
+
         return moreThan30;
 
     }
@@ -396,6 +405,14 @@ function endMatch(match) {
         }
 
         // Bisogna settare le sconfitte
+        var filteredWithLosersCards = match.users.filter(function(x) { 
+            return userHighestScore.indexOf(x) < 0;
+          });
+
+          filteredWithLosersCards.forEach(element => {
+              element.defeats += 1
+              userService.setDefeats(element.id, element.defeats)
+          });
 
         return userHighestScore;
 
