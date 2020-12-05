@@ -231,7 +231,17 @@ function assignPoints(match) {
                             );
                             // Narrator earns
                             console.log("user.score before sum" + user.score);
-                            user.score = user.score + 3;
+                            if(match.users.length > 6){
+                                user.score = user.score + 4;
+                            }
+                            else if(match.users.length > 8){
+                                user.score = user.score + 5;
+                            }
+                            else if(match.users.length > 10){
+                                user.score = user.score + 6;
+                            }else if(match.users.length < 7 ){
+                                user.score = user.score + 3;
+                            }
                             // continue
                         }
                     } else {
@@ -268,7 +278,7 @@ function assignPoints(match) {
                             // The user selected the right card, earns 2 points
 
                             user.score = user.score + 2;
-                        } else if (card.selected.length > 0) {
+                        } if (card.selected.length > 0) {
                             // Someone selected the user's card
                             // He earns as many points as the selected number
 
